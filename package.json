@@ -11,6 +11,8 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "better-sqlite3": "^13.0.2",
+    "express": "^5.2.1",
+    "sqlite3": "^6.0.1"
   }
 }

@@ -1,9 +1,9 @@
 
-export function getMileage (){
-    
+export function getMileage (req: Request, res: Response){
+ 
 };
 
 
-export function getTotalWeight(){
+export function getTotalWeight(req: Request, res: Response){
 
 };
