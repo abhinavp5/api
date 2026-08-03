@@ -18,7 +18,7 @@ const client_id = process.env.SPOTIFY_CLIENT_ID;
 export function handleLogin(req: Request, res: Response) {
   console.log("Handling Spotify Login");
   const state = generateRandomString();
-  const scope = "user-read-private user-read-email";
+  const scope = "user-read-private user-read-email user-top-read";
   if (!client_id) {
     throw new Error("No Spotify Client ID set");
   }

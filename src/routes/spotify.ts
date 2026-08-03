@@ -14,7 +14,6 @@ spotifyRouter.get("/login", handleLogin);
 spotifyRouter.get("/callback", handleCallback);
 spotifyRouter.get("/token-check", (req: Request, res: Response) => {
   const cookie_acces_token = req.cookies.spotify_access_token;
-  console.log(cookie_acces_token);
   res.json({
     hasToken: Boolean(cookie_acces_token),
   });
