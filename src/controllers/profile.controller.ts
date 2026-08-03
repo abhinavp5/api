@@ -70,12 +70,4 @@ export function getContact(req: Request, res: Response) {
 
 export function getExperience(req: Request, res: Response) {
   //TODO: Fill in Later
-  const experiences: experienceEntry[] = [
-    {
-      name: "Cvent",
-      startedAt: "2026-06-01T12:00:00Z",
-      description: "Intern"
-    },
-  ];
-  res.json({ experience: experiences});
 }

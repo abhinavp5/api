@@ -1,18 +1,28 @@
 {
   "name": "personal-api",
-  "module": "src/index.ts",
+  "module": "app.ts",
   "type": "module",
   "private": true,
   "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
     "@types/bun": "latest",
-    "@types/express": "^5.0.6"
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.1.2",
+    "tsx": "^4.23.1",
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.2",
+    "cookie-parser": "^1.4.7",
     "express": "^5.2.1",
     "sqlite3": "^6.0.1"
+  },
+  "scripts": {
+    "dev": "node --env-file=.env --import tsx --watch app.ts",
+    "start": "node --env-file=.env --import tsx app.ts"
   }
 }

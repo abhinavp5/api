@@ -1,4 +1,4 @@
-
+import type { Request, Response } from "express";
 export function getTopSongs(req: Request, res: Response){
     
 };

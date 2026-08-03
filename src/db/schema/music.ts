@@ -1,4 +1,4 @@
-export const topSongsQuery = `
+export const createTopSongsQuery = `
 CREATE TABLE IF NOT EXISTS topSongs(
     id TEXT PRIMARY KEY,
     title TEXT NOT NULL, 
@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS topSongs(
 );
 `;
 
-export const topArtistsQuery = `
+export const  createTopArtistsQuery = `
 CREATE TABLE IF NOT EXISTS topArtists(
     id TEXT PRIMARY KEY,
     artist TEXT NOT NULL, 

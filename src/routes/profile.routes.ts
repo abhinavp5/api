@@ -1,12 +1,17 @@
 import type {Request, Response } from 'express';
 import {Router} from 'express';
-
+import{
+  getAbout,
+  getCourses,
+  getContact,
+  getExperience
+} from '../controllers/profile.controller';
 export const profileRouter = Router();
 
 {
   /*Profile*/
 }
-profileRouter.get("/about", (req: Request, res: Response) => {});
-profileRouter.get("/courses", (req: Request, res: Response) => {});
-profileRouter.get("/contact", (req: Request, res: Response) => {});
-profileRouter.get("/experience", (req: Request, res: Response) => {});
+profileRouter.get("/about",getAbout);
+profileRouter.get("/courses", getCourses);
+profileRouter.get("/contact", getContact);
+profileRouter.get("/experience", getExperience);

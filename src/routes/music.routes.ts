@@ -6,5 +6,5 @@ export const musicRouter = Router();
 {
   /*Profile*/
 }
-musicRouter.get("/topSongs", (req: Request, res: Response) => {});
-musicRouter.get("/topArtists", (req: Request, res: Response) => {});
+musicRouter.get("/topSongs", getTopSongs);
+musicRouter.get("/topArtists", getTopArtists);
