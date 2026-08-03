@@ -8,6 +8,7 @@ import {
 import { createBlogsQuery } from "./schema/blog";
 import { createTopSongsQuery, createTopArtistsQuery } from "./schema/music";
 import { createRunsQuery } from "./schema/fitness";
+import { seedProfile } from "./seeds/profile.seed";
 
 const db = new Database("data/personal-api.db");
 db.pragma("journal_mode = WAL");
@@ -22,5 +23,4 @@ db.exec(createTopSongsQuery);
 db.exec(createTopArtistsQuery);
 db.exec(createRunsQuery);
 
-
-
+seedProfile(db);
