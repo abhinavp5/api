@@ -1,71 +1,39 @@
+import Database from "better-sqlite3";
 import type { Request, Response } from "express";
 
+interface CourseRow {
+  course_dept: string;
+  course_num: number;
+}
+const db = new Database("data/personal-api.db");
+
 export function getAbout(req: Request, res: Response) {
-  res.json({
-    name: "Abhinav Pappu",
-    description: "4th year Electrical and Computer Engineering student at UVA",
-  });
+  const select_desc = db.prepare(
+    "SELECT name,school,major,bio FROM profile WHERE ID = 1",
+  );
+  const myDescription = select_desc.get();
+  res.json(myDescription);
 }
 
-export function getCourses(req: Request, res: Response){
-  const courses: Array<String> = [
-    "BIOL 2100",
-    "BIOL 2200",
-    "CHEM 1411",
-    "CHEM 1810",
-    "COLA 1500",
-    "CS 2100",
-    "CS 2120",
-    "CS 2130",
-    "CS 3100",
-    "CS 3130",
-    "CS 3140",
-    "CS 3501",
-    "CS 3710",
-    "CS 4330",
-    "CS 4444",
-    "ECE 2200",
-    "ECE 2300",
-    "ECE 2330",
-    "ECE 2600",
-    "ECE 2700",
-    "ECE 3103",
-    "ECE 3430",
-    "ECE 3502",
-    "ECE 3660",
-    "ECE 4332",
-    "ECE 4435",
-    "ECE 4440",
-    "EGMT 1510",
-    "EGMT 1520",
-    "EGMT 1530",
-    "EGMT 1540",
-    "ENWR 1510",
-    "MATH 1310",
-    "MATH 1320",
-    "MATH 2310",
-    "MATH 2670",
-    "MATH 3100",
-    "PHIL 1410",
-    "PHYS 1425",
-    "PHYS 1429",
-    "RELG 1040",
-    "SPAN 1060",
-    "SPAN 2010",
-    "SPAN 2020",
-    "STAT 1601",
-    "STS 2600",
-    "STS 4500",
-  ];
-  res.json({ courses: courses });
+export function getCourses(req: Request, res: Response) {
+  // TODO: add a certain more granular course based choices
+  var finalCourses: String[];
+  const rows = db
+    .prepare("SELECT course_dept, course_num from courses")
+    .all() as CourseRow[];
+
+  const courses = rows.map(
+    ({ course_dept, course_num }) => `${course_dept} ${course_num}`,
+  );
+  res.json({ courses });
 }
 
 export function getContact(req: Request, res: Response) {
-  res.json({
-    website: "abhinavpappu.xyz",
-    linkedin: "linkedin.com/in/abhinav-pappu",
-    github: "github.com/abhinavp5",
-  });
+  const select_desc = db.prepare(
+    "SELECT website,linkedin,github FROM contact WHERE ID = 1",
+  );
+  const myContact = select_desc.get();
+  res.json(myContact);
 }
 
 export function getExperience(req: Request, res: Response) {

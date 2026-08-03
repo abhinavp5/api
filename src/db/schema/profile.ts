@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS profile (
 export const createCoursesTableQuery = `
 CREATE TABLE IF NOT EXISTS courses(
     id INTEGER PRIMARY KEY,
-    name TEXT NOT NULL,
-    mnemonic TEXT NOT NULL
+    course_dept TEXT NOT NULL,
+    course_num INTEGER NOT NULL
 );
 `;
 
@@ -47,11 +47,11 @@ ON CONFLICT(id) DO UPDATE SET
 `;
 
 export const upsertCourseQuery = `
-INSERT INTO courses (id, name, mnemonic)
-VALUES (@id, @name, @mnemonic)
+INSERT INTO courses (id,course_dept, course_num)
+VALUES (@id, @course_dept, @course_num)
 ON CONFLICT(id) DO UPDATE SET
-    name = excluded.name,
-    mnemonic = excluded.mnemonic;
+    course_dept = excluded.course_dept,
+    course_num = excluded.course_num;
 `;
 
 export const upsertContactQuery = `

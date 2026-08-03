@@ -78,9 +78,18 @@ export function seedProfile(db: Database.Database) {
   const seed = db.transaction(() => {
     upsertProfile.run(profile);
 
-    courseNames.forEach((name, index) => {
-      const mnemonic = name.split(" ")[0];
-      upsertCourse.run({ id: index + 1, name, mnemonic });
+    courseNames.forEach((course, index) => {
+      const [courseDept, courseNumber] = course.split(" ");
+
+      if (!courseDept || !courseNumber) {
+        throw new Error(`Invalid course format: ${course}`);
+      }
+
+      upsertCourse.run({
+        id: index + 1,
+        course_dept: courseDept,
+        course_num: Number(courseNumber),
+      });
     });
 
     upsertContact.run(contact);
