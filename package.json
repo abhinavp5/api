@@ -26,5 +26,12 @@
   "scripts": {
     "dev": "node --env-file=.env --import tsx --watch app.ts",
     "start": "node --env-file=.env --import tsx app.ts"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "esbuild",
+      "sqlite3"
+    ]
   }
 }
