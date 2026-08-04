@@ -6,7 +6,11 @@ import {
   createExperienceQuery,
 } from "./schema/profile";
 import { createBlogsQuery } from "./schema/blog";
-import { createTopSongsQuery, createTopArtistsQuery } from "./schema/music";
+import {
+  createArtistsQuery,
+  createSongArtistsQuery,
+  createTopSongsQuery,
+} from "./schema/music";
 import { createRunsQuery } from "./schema/fitness";
 import { seedProfile } from "./seeds/profile.seed";
 
@@ -14,6 +18,28 @@ const db = new Database("data/personal-api.db");
 
 export function initDatabase() {
   db.pragma("journal_mode = WAL");
+  db.pragma("foreign_keys = ON");
+
+  const topSongColumns = db.prepare("PRAGMA table_info(topSongs)").all() as Array<{
+    name: string;
+  }>;
+  const hasCurrentMusicSchema = [
+    "id",
+    "ranking",
+    "title",
+    "coverart",
+    "album",
+  ].every((column) => topSongColumns.some(({ name }) => name === column));
+
+  if (topSongColumns.length > 0 && !hasCurrentMusicSchema) {
+    db.exec(`
+      DROP TABLE IF EXISTS songArtists;
+      DROP TABLE IF EXISTS artists;
+      DROP TABLE IF EXISTS topSongs;
+    `);
+  }
+
+  db.exec("DROP TABLE IF EXISTS topArtists");
 
   //  Creating Tables
   db.exec(createAboutTableQuery);
@@ -22,7 +48,8 @@ export function initDatabase() {
   db.exec(createExperienceQuery);
   db.exec(createBlogsQuery);
   db.exec(createTopSongsQuery);
-  db.exec(createTopArtistsQuery);
+  db.exec(createArtistsQuery);
+  db.exec(createSongArtistsQuery);
   db.exec(createRunsQuery);
 
   seedProfile(db);

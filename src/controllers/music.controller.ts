@@ -1,28 +1,38 @@
 import type { Request, Response } from "express";
+import { db } from "../db/database";
 
-type topItem = "artists" | "tracks";
-
-// Both fetch directly from the Spotify API
-function getTopItems(itemType: topItem) {
-  return async (req: Request, res: Response) => {
-    const auth_token: string = req.cookies.spotify_access_token;
-    if (!auth_token) {
-      throw new Error("No Auth Token login with /spotify/login");
-    }
-
-    const response = await fetch(
-      `https://api.spotify.com/v1/me/top/${itemType}?time_range=short_term&limit=20&offset=0`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${auth_token}`,
-        },
-      },
-    );
-    const json_response = await response.json(); // TODO might type this later
-    res.json(json_response);
-  };
+interface TopSongRow {
+  id: string;
+  ranking: number;
+  title: string;
+  coverart: string | null;
+  album: string;
 }
 
-export const getTopSongs =  getTopItems("tracks");
-export const getTopArtists = getTopItems("artists");
+interface ArtistRow {
+  id: string;
+  name: string;
+}
+
+export function getTopSongs(req: Request, res: Response) {
+  const selectTopSongs = db.prepare(`
+    SELECT id, ranking, title, coverart, album
+    FROM topSongs
+    ORDER BY ranking
+  `);
+  const selectSongArtists = db.prepare(`
+    SELECT artists.id, artists.name
+    FROM artists
+    JOIN songArtists ON songArtists.artist_id = artists.id
+    WHERE songArtists.song_id = ?
+    ORDER BY songArtists.position
+  `);
+
+  const rows = selectTopSongs.all() as TopSongRow[];
+  const songs = rows.map((song) => ({
+    ...song,
+    artists: selectSongArtists.all(song.id) as ArtistRow[],
+  }));
+
+  res.json({ songs });
+}
