@@ -5,13 +5,16 @@ import cookieParser from "cookie-parser";
 import { initDatabase } from "./src/db/database";
 
 const app: Express = express();
-const isProduction = process.env.NODE_ENV === "production";
-const allowedOrigin = isProduction
-  ? process.env.PROD_FRONTEND_URL
-  : process.env.DEV_FRONTEND_URL;
 
-const corsOptions = {
-  origin: allowedOrigin,
+const allowedOrigins = [
+  process.env.PROD_FRONTEND_URL,
+  process.env.DEV_FRONTEND_URL,
+  "http://127.0.0.1:5173",
+  "http://localhost:5173",
+].filter((origin): origin is string => Boolean(origin));
+
+const corsOptions: CorsOptions = {
+  origin: allowedOrigins,
   methods: ["GET"],
   credentials: true,
 };
