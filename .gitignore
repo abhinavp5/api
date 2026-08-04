@@ -149,5 +149,6 @@ src/db/seed/*
 # macOS
 .DS_Store
 
-# TLS certs (Let's Encrypt)
-certbot/
+# Cloudflare Tunnel credentials
+cloudflared/config.yml
+cloudflared/*.json
