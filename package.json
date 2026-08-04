@@ -3,6 +3,7 @@
   "module": "app.ts",
   "type": "module",
   "private": true,
+  "packageManager": "pnpm@10.34.5",
   "devDependencies": {
     "@types/better-sqlite3": "^9.6.0",
     "@types/bun": "latest",
@@ -26,12 +27,5 @@
   "scripts": {
     "dev": "node --env-file=.env --import tsx --watch app.ts",
     "start": "node --env-file=.env --import tsx app.ts"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "better-sqlite3",
-      "esbuild",
-      "sqlite3"
-    ]
   }
 }
