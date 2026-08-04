@@ -22,15 +22,15 @@ interface SpotifyTopTracksResponse {
 
 const generateRandomString = (): string =>
   crypto.randomBytes(16).toString("hex");
-const redirect_uri = "http://127.0.0.1:3000/spotify/callback";
+const redirect_uri = process.env.SPOTIFY_REDIRECT_URI;
 const client_id = process.env.SPOTIFY_CLIENT_ID;
 
 export function handleLogin(req: Request, res: Response) {
   console.log("Handling Spotify Login");
   const state = generateRandomString();
   const scope = "user-read-private user-read-email user-top-read";
-  if (!client_id) {
-    throw new Error("No Spotify Client ID set");
+  if (!client_id || !redirect_uri) {
+    throw new Error("Spotify client ID or redirect URI not configured");
   }
 
   res.redirect(
@@ -54,7 +54,7 @@ export async function handleCallback(req: Request, res: Response) {
   const state = req.query.state || null;
   const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
 
-  if (!client_id || !client_secret) {
+  if (!client_id || !client_secret || !redirect_uri) {
     throw new Error("Spotify client credentials are not configured");
   }
 
@@ -126,9 +126,11 @@ export async function handleCallback(req: Request, res: Response) {
     seedTopSongs(db, topTracks.items);
 
     // Set Cookie
+    const isProduction = process.env.NODE_ENV === "production";
     res.cookie("spotify_access_token", response_data.access_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge: response_data.expires_in * 1000,
     });
     res.redirect("/spotify/token-check");
