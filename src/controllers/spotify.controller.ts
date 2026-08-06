@@ -100,6 +100,9 @@ export async function handleCallback(req: Request, res: Response) {
     });
 
     await seedSpotifyTopData();
+    res.json(
+      {"message": "Spotify Auth Complete"}
+    );
   }
 
   async function seedSpotifyTopData() {
