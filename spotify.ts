@@ -21,13 +21,6 @@ app.get("/login", (req, res) => {
     "user-top-read",
     "user-library-read",
   ].join(" ");
-
-  // Save this somewhere so you can verify it in /callback.
-  res.cookie("spotify_auth_state", state, {
-    httpOnly: true,
-    sameSite: "lax",
-  });
-
   const authorizationUrl =
     "https://accounts.spotify.com/authorize?" +
     querystring.stringify({

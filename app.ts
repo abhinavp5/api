@@ -1,7 +1,6 @@
 import express, { type Express } from "express";
 import cors, { type CorsOptions } from "cors";
 import { apiRouter } from "./src/routes";
-import cookieParser from "cookie-parser";
 import { initDatabase } from "./src/db/database";
 import { syncNewMusic } from "./src/services/spotify.services";
 
@@ -20,7 +19,6 @@ const corsOptions: CorsOptions = {
   credentials: true,
 };
 
-app.use(cookieParser());
 app.use("/", cors(corsOptions), apiRouter);
 initDatabase();
 syncNewMusic.start();

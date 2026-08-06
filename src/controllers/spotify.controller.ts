@@ -99,17 +99,7 @@ export async function handleCallback(req: Request, res: Response) {
       refresh_token_expires_at: now + 1000 * 60 * 60 * 24 * 30 * 5,
     });
 
-    // Set Access Token Cookie Once - refreshed every hour
-    const isProduction = process.env.NODE_ENV === "production";
-    res.cookie("spotify_access_token", response_data.access_token, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
-      maxAge: response_data.expires_in * 1000,
-    });
-
     await seedSpotifyTopData();
-    res.redirect("/spotify/token-check");
   }
 
   async function seedSpotifyTopData() {
