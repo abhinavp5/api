@@ -1,18 +1,6 @@
 import type { Request, Response } from "express";
 import { db } from "../db/database";
-
-interface TopSongRow {
-  id: string;
-  ranking: number;
-  title: string;
-  coverart: string | null;
-  album: string;
-}
-
-interface ArtistRow {
-  id: string;
-  name: string;
-}
+import type { ArtistRow, TopSongRow } from "../../types";
 
 export function getTopSongs(req: Request, res: Response) {
   const selectTopSongs = db.prepare(`

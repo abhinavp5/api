@@ -1,10 +1,6 @@
 import Database from "better-sqlite3";
 import type { Request, Response } from "express";
-
-interface CourseRow {
-  course_dept: string;
-  course_num: number;
-}
+import type { CourseRow } from "../../types";
 const db = new Database("data/personal-api.db");
 
 export function getAbout(req: Request, res: Response) {

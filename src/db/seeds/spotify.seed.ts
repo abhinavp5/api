@@ -1,19 +1,5 @@
 import type Database from "better-sqlite3";
-
-export interface SpotifyTopTrack {
-  id: string;
-  name: string;
-  artists: Array<{
-    id: string;
-    name: string;
-  }>;
-  album: {
-    name: string;
-    images: Array<{
-      url: string;
-    }>;
-  };
-}
+import type { SpotifyTopTrack } from "../../../types";
 
 export function seedTopSongs(
   db: Database.Database,

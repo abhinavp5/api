@@ -3,6 +3,7 @@ import cors, { type CorsOptions } from "cors";
 import { apiRouter } from "./src/routes";
 import cookieParser from "cookie-parser";
 import { initDatabase } from "./src/db/database";
+import { syncNewMusic } from "./src/services/spotify.services";
 
 const app: Express = express();
 
@@ -22,6 +23,7 @@ const corsOptions: CorsOptions = {
 app.use(cookieParser());
 app.use("/", cors(corsOptions), apiRouter);
 initDatabase();
+syncNewMusic.start();
 
 app.listen(3000, () => {
   console.log("Server is running");

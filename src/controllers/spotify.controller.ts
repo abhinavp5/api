@@ -3,22 +3,12 @@ import querystring from "node:querystring";
 import crypto from "node:crypto";
 import { Buffer } from "node:buffer";
 import { db } from "../db/database";
-import {
-  seedTopSongs,
-  type SpotifyTopTrack,
-} from "../db/seeds/spotify.seed";
-
-interface SpotifyAuthResponse {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-  refresh_token: string;
-  scope: string;
-}
-
-interface SpotifyTopTracksResponse {
-  items: SpotifyTopTrack[];
-}
+import { upsertSpotifyAuthQuery } from "../db/schema/music";
+import { seedTopSongs } from "../db/seeds/spotify.seed";
+import type {
+  SpotifyAuthResponse,
+  SpotifyTopTracksResponse,
+} from "../../types";
 
 const generateRandomString = (): string =>
   crypto.randomBytes(16).toString("hex");
@@ -99,16 +89,44 @@ export async function handleCallback(req: Request, res: Response) {
       throw new Error("Spotify token response did not contain an access token");
     }
 
+    const upsertSpotifyAuth = db.prepare(upsertSpotifyAuthQuery);
+    const now = Date.now();
+
+    upsertSpotifyAuth.run({
+      auth_token: response_data.access_token,
+      auth_token_expires_at: now + response_data.expires_in * 1000,
+      refresh_token: response_data.refresh_token,
+      refresh_token_expires_at: now + 1000 * 60 * 60 * 24 * 30 * 5,
+    });
+
+    // Set Access Token Cookie Once - refreshed every hour
+    const isProduction = process.env.NODE_ENV === "production";
+    res.cookie("spotify_access_token", response_data.access_token, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: response_data.expires_in * 1000,
+    });
+
+    await seedSpotifyTopData();
+    res.redirect("/spotify/token-check");
+  }
+
+  async function seedSpotifyTopData() {
     const topTracksUrl = new URL("https://api.spotify.com/v1/me/top/tracks");
     topTracksUrl.search = new URLSearchParams({
       time_range: "short_term",
       limit: "20",
       offset: "0",
     }).toString();
+    const access_token = db
+      .prepare("SELECT auth_token FROM spotifyAuth WHERE id = 1")
+      .pluck()
+      .get() as string;
 
     const topTracksResponse = await fetch(topTracksUrl, {
       headers: {
-        Authorization: `Bearer ${response_data.access_token}`,
+        Authorization: `Bearer ${access_token}`,
       },
     });
     const topTracksText = await topTracksResponse.text();
@@ -120,19 +138,11 @@ export async function handleCallback(req: Request, res: Response) {
 
     const topTracks = JSON.parse(topTracksText) as SpotifyTopTracksResponse;
     if (!Array.isArray(topTracks.items)) {
-      throw new Error("Spotify top tracks response did not contain an items array");
+      throw new Error(
+        "Spotify top tracks response did not contain an items array",
+      );
     }
 
     seedTopSongs(db, topTracks.items);
-
-    // Set Cookie
-    const isProduction = process.env.NODE_ENV === "production";
-    res.cookie("spotify_access_token", response_data.access_token, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
-      maxAge: response_data.expires_in * 1000,
-    });
-    res.redirect("/spotify/token-check");
   }
 }

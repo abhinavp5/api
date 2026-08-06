@@ -10,9 +10,11 @@ import {
   createArtistsQuery,
   createSongArtistsQuery,
   createTopSongsQuery,
+  createSpotifyAuthTableQuery,
 } from "./schema/music";
 import { createRunsQuery } from "./schema/fitness";
 import { seedProfile } from "./seeds/profile.seed";
+import { create } from "node:domain";
 
 const db = new Database("data/personal-api.db");
 
@@ -51,6 +53,7 @@ export function initDatabase() {
   db.exec(createArtistsQuery);
   db.exec(createSongArtistsQuery);
   db.exec(createRunsQuery);
+  db.exec(createSpotifyAuthTableQuery);
 
   seedProfile(db);
 }
